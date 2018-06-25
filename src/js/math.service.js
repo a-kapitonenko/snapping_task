@@ -121,3 +121,11 @@ export function isVertexBelongVerticalLine(vertex, line) {
 export function isVertexBelongHorizontalLine(vertex, line) {
     return (line[0].x + 0) <= vertex.x && vertex.x <= (line[1].x - 0)
 }
+
+export function getMinimalDistance(firstDistance, secondDistance) {
+    if (Math.abs(firstDistance) <= Math.abs(secondDistance)) {
+        return firstDistance;
+    } 
+
+    return secondDistance;
+}

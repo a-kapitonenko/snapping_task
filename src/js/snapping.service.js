@@ -1,70 +1,85 @@
 import * as MathService from "./math.service";
 
-export function isLeftSnapping(firstPolygon, secondPolygon) {
-    const firstLine = MathService.initializeLine(secondPolygon.vertices[1], secondPolygon.vertices[2]);
-    const secondLine = MathService.initializeLine(firstPolygon.vertices[0], firstPolygon.vertices[3]);
+export function isLeftSnappingNeeded(firstPolygon, secondPolygon) {
+    const firstLine = secondPolygon.getRightLine();
+    const secondLine = firstPolygon.getLeftLine();
 
     const dx = firstPolygon.vertices[0].x - secondPolygon.vertices[1].x;
 
     return MathService.isVerticalLinesSnapped(firstLine, secondLine) && Math.abs(dx) <= 10;
 }
 
-export function isRightSnapping(firstPolygon, secondPolygon) {
-    const firstLine = MathService.initializeLine(secondPolygon.vertices[0], secondPolygon.vertices[3]);
-    const secondLine = MathService.initializeLine(firstPolygon.vertices[1], firstPolygon.vertices[2]);
-
+export function isRightSnappingNeeded(firstPolygon, secondPolygon) {
+    const firstLine = secondPolygon.getLeftLine();
+    const secondLine = firstPolygon.getRightLine();
     const dx = firstPolygon.vertices[1].x - secondPolygon.vertices[0].x;
 
     return MathService.isVerticalLinesSnapped(firstLine, secondLine) && Math.abs(dx) <= 10;
 }
 
-export function isBottomSnapping(firstPolygon, secondPolygon) {
-    const firstLine = MathService.initializeLine(secondPolygon.vertices[0], secondPolygon.vertices[1]);
-    const secondLine = MathService.initializeLine(firstPolygon.vertices[3], firstPolygon.vertices[2]);
+export function isBottomSnappingNeeded(firstPolygon, secondPolygon) {
+    const firstLine = secondPolygon.getTopLine();
+    const secondLine = firstPolygon.getBottomLine();
 
     const dy = firstPolygon.vertices[2].y - secondPolygon.vertices[0].y;
 
     return MathService.isHorizontalLinesSnapped(firstLine, secondLine) && Math.abs(dy) <= 10;
 }
 
-export function isTopSnapping(firstPolygon, secondPolygon) {
-    const firstLine = MathService.initializeLine(secondPolygon.vertices[3], secondPolygon.vertices[2]);
-    const secondLine = MathService.initializeLine(firstPolygon.vertices[0], firstPolygon.vertices[1]);
+export function isTopSnappingNeeded(firstPolygon, secondPolygon) {
+    const firstLine = secondPolygon.getBottomLine();
+    const secondLine = firstPolygon.getTopLine();
 
     const dy = firstPolygon.vertices[0].y - secondPolygon.vertices[2].y;
 
     return MathService.isHorizontalLinesSnapped(firstLine, secondLine) && Math.abs(dy) <= 10;
 }
 
-export function leftSnapping(firstPolygon, secondPolygon, mouse) {
+export function snapToTheLeft(firstPolygon, secondPolygon, mouse) {
+    const distanceToTheFirstVertex = secondPolygon.vertices[1].y - firstPolygon.vertices[0].y;
+    const distanceToTheSecondVertex = secondPolygon.vertices[2].y - firstPolygon.vertices[3].y;
+
+    const dy = MathService.getMinimalDistance(distanceToTheFirstVertex, distanceToTheSecondVertex);
+
     const dx = secondPolygon.vertices[1].x - firstPolygon.vertices[0].x;
-    const dy = secondPolygon.vertices[2].y - firstPolygon.vertices[2].y;
 
-    snapping(firstPolygon, secondPolygon, mouse, dx, dy);
+    snapPolygon(firstPolygon, secondPolygon, mouse, dx, dy);
 }
 
-export function rightSnapping(firstPolygon, secondPolygon, mouse) {
+export function snapToTheRight(firstPolygon, secondPolygon, mouse) {
+    const distanceToTheFirstVertex = secondPolygon.vertices[0].y - firstPolygon.vertices[1].y;
+    const distanceToTheSecondVertex = secondPolygon.vertices[3].y - firstPolygon.vertices[2].y;
+
+    const dy = MathService.getMinimalDistance(distanceToTheFirstVertex, distanceToTheSecondVertex);
+
     const dx = secondPolygon.vertices[0].x - firstPolygon.vertices[1].x;
-    const dy = secondPolygon.vertices[2].y - firstPolygon.vertices[2].y;
 
-    snapping(firstPolygon, secondPolygon, mouse, dx, dy);
+    snapPolygon(firstPolygon, secondPolygon, mouse, dx, dy);
 }
 
-export function bottomSnapping(firstPolygon, secondPolygon, mouse) {
-    const dx = secondPolygon.vertices[0].x - firstPolygon.vertices[0].x
+export function snapToTheBottom(firstPolygon, secondPolygon, mouse) {
+    const distanceToTheFirstVertex = secondPolygon.vertices[0].x - firstPolygon.vertices[3].x;
+    const distanceToTheSecondVertex = secondPolygon.vertices[1].x - firstPolygon.vertices[2].x;
+
+    const dx = MathService.getMinimalDistance(distanceToTheFirstVertex, distanceToTheSecondVertex);
+
     const dy = secondPolygon.vertices[0].y - firstPolygon.vertices[2].y;
     
-    snapping(firstPolygon, secondPolygon, mouse, dx, dy);
+    snapPolygon(firstPolygon, secondPolygon, mouse, dx, dy);
 }
 
-export function topSnapping(firstPolygon, secondPolygon, mouse) {
-    const dx = secondPolygon.vertices[0].x - firstPolygon.vertices[0].x
+export function snapToTheTop(firstPolygon, secondPolygon, mouse) {
+    const distanceToTheFirstVertex = secondPolygon.vertices[3].x - firstPolygon.vertices[0].x;
+    const distanceToTheSecondVertex = secondPolygon.vertices[2].x - firstPolygon.vertices[1].x;
+
+    const dx = MathService.getMinimalDistance(distanceToTheFirstVertex, distanceToTheSecondVertex);
+    
     const dy = secondPolygon.vertices[2].y - firstPolygon.vertices[0].y;
 
-    snapping(firstPolygon, secondPolygon, mouse, dx, dy);
+    snapPolygon(firstPolygon, secondPolygon, mouse, dx, dy);
 }
 
-export function snapping(firstPolygon, secondPolygon, mouse, dx, dy) {
+export function snapPolygon(firstPolygon, secondPolygon, mouse, dx, dy) {
     if (!firstPolygon.isSnapped && !secondPolygon.isSnapped){
         firstPolygon.move(dx, dy);
 

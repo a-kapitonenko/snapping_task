@@ -1,7 +1,6 @@
 import * as MathService from "./math.service";
 import * as SnappingService from "./snapping.service"
-import Polygon from "./polygon";
-import Mouse from "./mouse";
+import Rectangle from "./rectangle";
 
 var config = require('../config.json');
    
@@ -16,7 +15,7 @@ export function initializePolygons() {
     for (let i = 0; i < numberOfPolygons; i++) {
         const width = MathService.getRandomArbitrary(config.polygon.width.min, config.polygon.width.max);
         const height = MathService.getRandomArbitrary(config.polygon.height.min, config.polygon.height.max);
-        const polygon = new Polygon(pointX, pointY, width, height);
+        const polygon = new Rectangle(pointX, pointY, width, height);
 
         polygons.push(polygon);
         pointY += centerSpacing; 
@@ -78,28 +77,32 @@ export function initialPositionOfPolygons(selectedItem) {
         const dx = selectedItem.firstVertex.x - selectedItem.vertices[0].x;
         const dy = selectedItem.firstVertex.y - selectedItem.vertices[0].y;
 
-        selectedItem.move(dx, dy);
-
         selectedItem.intersections.forEach((item) => {
-            selectedItem.deleteIntersection(item);
             item.deleteIntersection(selectedItem);
         });
+
+        selectedItem.clearIntersection();
+
+        selectedItem.move(dx, dy);
+
     } else {
         selectedItem.changeFirstPosition(selectedItem.vertices[0].x, selectedItem.vertices[0].y);
     }
+
+    
 }
 
 export function snappingOfPolygons(polygons, selectedItem, mouse) {
     polygons.forEach((item) => {
         if (selectedItem !== item) {
-            if (SnappingService.isLeftSnapping(selectedItem, item)) {
-                SnappingService.leftSnapping(selectedItem, item, mouse)
-            } else if (SnappingService.isRightSnapping(selectedItem, item)) {
-                SnappingService.rightSnapping(selectedItem, item, mouse)
-            } else if (SnappingService.isBottomSnapping(selectedItem, item)) {
-                SnappingService.bottomSnapping(selectedItem, item, mouse)
-            } else if (SnappingService.isTopSnapping(selectedItem, item)) {
-                SnappingService.topSnapping(selectedItem, item, mouse)
+            if (SnappingService.isLeftSnappingNeeded(selectedItem, item)) {
+                SnappingService.snapToTheLeft(selectedItem, item, mouse)
+            } else if (SnappingService.isRightSnappingNeeded(selectedItem, item)) {
+                SnappingService.snapToTheRight(selectedItem, item, mouse)
+            } else if (SnappingService.isBottomSnappingNeeded(selectedItem, item)) {
+                SnappingService.snapToTheBottom(selectedItem, item, mouse)
+            } else if (SnappingService.isTopSnappingNeeded(selectedItem, item)) {
+                SnappingService.snapToTheTop(selectedItem, item, mouse)
             } else if(item.isSnapped) {
                 item.isSnapped = false;
                 selectedItem.isSnapped = false;

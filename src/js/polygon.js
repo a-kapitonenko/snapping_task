@@ -16,6 +16,26 @@ class Polygon {
         this.__initialize();
     }
 
+    __initialize() {
+        const x = this._firstVertex.x;
+        const y = this._firstVertex.y;
+
+        const secondVertex = {
+            x: x + this._width,
+            y: y
+        };
+        const thirdVertex = {
+            x: secondVertex.x,
+            y: secondVertex.y + this._height  
+        };
+        const fourthVertex = {
+            x: thirdVertex.x - this._width,
+            y: thirdVertex.y
+        }
+
+        this._vertices = MathService.initializeRectangle({x,y}, secondVertex, thirdVertex, fourthVertex);
+    }
+
     get vertices() {
         return this._vertices;
     }
@@ -48,26 +68,6 @@ class Polygon {
         this._isSnapped = value;
     }
 
-    __initialize() {
-        const x = this._firstVertex.x;
-        const y = this._firstVertex.y;
-
-        const secondVertex = {
-            x: x + this._width,
-            y: y
-        };
-        const thirdVertex = {
-            x: secondVertex.x,
-            y: secondVertex.y + this._height  
-        };
-        const fourthVertex = {
-            x: thirdVertex.x - this._width,
-            y: thirdVertex.y
-        }
-
-        this._vertices = MathService.initializeRectangle({x,y}, secondVertex, thirdVertex, fourthVertex);
-    }
-    
     draw(ctx) {
         ctx.fillStyle = this.getFillStyle();
         ctx.beginPath();
@@ -125,6 +125,11 @@ class Polygon {
         }
     }
 
+    clearIntersection() {
+        this._intersections = [];
+        this._isIntersected = false;
+    }
+
     move(dx, dy) {
         this._vertices.forEach((item) => {
             item.x += dx;
@@ -140,9 +145,9 @@ class Polygon {
     getFillStyle() {
         if (this._isIntersected) {
             return "#FF0000";
-        } else { 
-            return "#000000";
         }
+
+        return "#000000";
     }
 };
 

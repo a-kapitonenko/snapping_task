@@ -13,7 +13,7 @@ class SelectService {
         this._selectedItem = item;
         this._isItemSelected = true;
     }
-    deleteSelectedItem() {
+    removeSelection() {
         this._selectedItem = {};
         this._isItemSelected = false;
     }
