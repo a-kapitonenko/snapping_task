@@ -1,0 +1,18 @@
+{
+    "polygon": {
+        "numberOfPolygons": 6,
+        "firstPoint": {
+            "X": 25,
+            "Y": 50
+        },
+        "centerSpacing": 100,
+        "width": {
+            "min": 40,
+            "max": 80
+        },
+        "height": {
+            "min": 40,
+            "max": 80
+        }
+    }
+}
